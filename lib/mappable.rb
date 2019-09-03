@@ -3,9 +3,9 @@
 require 'inheritance-helper'
 
 # Transfer/Map data from one model to the next
-module Mapable
-  autoload :Mapping, 'mapable/mapping'
-  autoload :Utils, 'mapable/utils'
+module Mappable
+  autoload :Mapping, 'mappable/mapping'
+  autoload :Utils, 'mappable/utils'
 
   def self.included(base)
     base.extend InheritanceHelper::Methods

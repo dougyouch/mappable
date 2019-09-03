@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Mapable
+module Mappable
   # Defines what fields to map
   module Mapping
     def self.included(base)
@@ -33,7 +33,7 @@ module Mapable
 
         dest ||= src
 
-        options = ::Mapable::Mapping.default_mapping_options(src, dest)
+        options = ::Mappable::Mapping.default_mapping_options(src, dest)
                                     .merge(options)
 
         add_value_to_class_method(:mappings, src.to_sym => options)
@@ -68,10 +68,10 @@ module Mapable
     end
 
     def self.create(base_module, name, options = {}, &block)
-      options[:class_name] ||= ::Mapable::Utils.classify_name(name.to_s) + 'Mapping'
+      options[:class_name] ||= ::Mappable::Utils.classify_name(name.to_s) + 'Mapping'
       kls = Class.new(options[:base_class] || Object)
       kls = base_module.const_set(options[:class_name], kls)
-      kls.send(:include, ::Mapable::Mapping)
+      kls.send(:include, ::Mappable::Mapping)
       kls.class_eval(&block) if block
       kls
     end

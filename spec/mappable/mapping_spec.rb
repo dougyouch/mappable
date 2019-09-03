@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Mapable::Mapping do
+describe Mappable::Mapping do
   let(:mapping_class_name) { 'Mapping' + SecureRandom.hex(10) }
   let(:mapping_class) do
-    Mapable::Mapping.create(Object, 'test_' + SecureRandom.hex(10)) do
+    Mappable::Mapping.create(Object, 'test_' + SecureRandom.hex(10)) do
       map :name, description: 'combination of first and last name'
       map :email, :email_address
       map :special_value1, if: :persisted

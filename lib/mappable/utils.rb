@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Mapable
+module Mappable
   # General purpouse utility methods
   module Utils
     module_function

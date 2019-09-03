@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe Mapable do
+describe Mappable do
   let(:src_class_name) { 'Src' + SecureRandom.hex(10) }
   let(:src_class) do
     kls = Struct.new(:first_name,
                      :last_name,
                      :email
                     ) do
-      include Mapable
+      include Mappable
 
       def name
         "#{first_name} #{last_name}"
