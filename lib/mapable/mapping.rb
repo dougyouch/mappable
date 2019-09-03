@@ -7,7 +7,7 @@ module Mapable
       base.extend InheritanceHelper::Methods
       base.extend ClassMethods
     end
-    
+
     def self.default_mapping_options(src, dest)
       {
         src: src.to_sym,
@@ -41,10 +41,30 @@ module Mapable
     end
 
     def map(src_model, dest_model)
-      self.class.mappings.each do |_, info|
-        dest_model.public_send(info[:dest_setter], src_model.public_send(info[:src_getter]))
+      self.class.mappings.each do |_, options|
+        next if skip?(src_model, dest_model, options)
+
+        dest_model.public_send(options[:dest_setter], src_model.public_send(options[:src_getter]))
       end
       dest_model
+    end
+
+    def skip?(src_model, dest_model, options)
+      return true if options[:if] && !call_method(dest_model, options[:if])
+      return true if options[:unless] && call_method(dest_model, options[:unless])
+
+      false
+    end
+
+    def call_method(model, method)
+      case method
+      when Symbol
+        model.public_send(method)
+      when Proc
+        model.instance_eval(&method)
+      else
+        raise("wrong type, failed to call method #{method}")
+      end
     end
 
     def self.create(base_module, name, options = {}, &block)
