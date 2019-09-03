@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require 'inheritance-helper'
 
@@ -11,6 +12,7 @@ module Mapable
     base.extend ClassMethods
   end
 
+  # no-doc
   module ClassMethods
     def maps
       {}.freeze
@@ -21,11 +23,11 @@ module Mapable
       add_value_to_class_method(:maps, name => mapping)
 
       class_eval(
-<<STR, __FILE__, __LINE__ + 1
-def map_to_#{name}(dest)
-  ::#{mapping.name}.new.map(self, dest)
-  dest
-end
+<<-STR, __FILE__, __LINE__ + 1
+  def map_to_#{name}(dest)
+    ::#{mapping.name}.new.map(self, dest)
+    dest
+  end
 STR
       )
     end

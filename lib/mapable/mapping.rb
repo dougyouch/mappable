@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 module Mapable
   # Defines what fields to map
@@ -14,10 +15,11 @@ module Mapable
         src_setter: "#{src}=",
         dest: dest.to_sym,
         dest_getter: dest.to_s.freeze,
-        dest_setter: "#{dest}=",
+        dest_setter: "#{dest}="
       }
     end
 
+    # no-doc
     module ClassMethods
       def mappings
         {}.freeze

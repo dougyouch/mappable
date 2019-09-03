@@ -8,4 +8,5 @@ Metrics/MethodLength:
   Max: 20
 AllCops:
   Exclude:
+    - 'spec/spec_helper.rb'
     - 'spec/**/*_spec.rb'
