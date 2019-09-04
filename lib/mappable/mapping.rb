@@ -45,12 +45,13 @@ module Mappable
         add_value_to_class_method(:mappings, dest.to_sym => options)
       end
 
-      def custom_map(dest, custom_method = nil, options = {})
+      def custom_map(dest, custom_method = nil, options = {}, &block)
         if custom_method.is_a?(Hash)
           options = custom_method
           custom_method = nil
         end
 
+        custom_method ||= block
         custom_method ||= dest
 
         options = ::Mappable::Mapping.default_custom_mapping_options(dest, custom_method)
@@ -104,7 +105,7 @@ module Mappable
       when Symbol
         public_send(method, model)
       when Proc
-        instance_eval(&method)
+        method.call(model)
       else
         raise("wrong type, failed to call method #{method}")
       end
