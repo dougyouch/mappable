@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Gem::Specification.new do |s|
-  s.name        = 'mappable'
+  s.name        = 'model-mapper'
   s.version     = '0.1.0'
   s.licenses    = ['MIT']
   s.summary     = 'Map data between models'

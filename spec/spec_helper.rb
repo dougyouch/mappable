@@ -18,4 +18,4 @@ end
 
 $LOAD_PATH.unshift(File.join(__FILE__, '../..', 'lib'))
 $LOAD_PATH.unshift(File.expand_path('..', __FILE__))
-require 'mappable'
+require 'model-mapper'
