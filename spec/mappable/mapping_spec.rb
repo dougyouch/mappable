@@ -4,10 +4,16 @@ describe Mappable::Mapping do
   let(:mapping_class_name) { 'Mapping' + SecureRandom.hex(10) }
   let(:mapping_class) do
     Mappable::Mapping.create(Object, 'test_' + SecureRandom.hex(10)) do
+      attr_accessor :has_role
+
       map :name, description: 'combination of first and last name'
       map :email, :email_address
-      map :special_value1, if: :persisted
-      map :special_value2, unless: lambda { |_| persisted }
+      map :special_value1, if_dest: :persisted
+      map :special_value2, unless_dest: lambda { |_| persisted }
+      map :special_value3, if_src: :has_permission
+      map :special_value4, unless_src: lambda { |_| has_permission }
+      map :special_value5, if: :has_role
+      map :special_value6, unless: lambda { |_| has_role }
     end
   end
 
@@ -16,8 +22,14 @@ describe Mappable::Mapping do
                      :last_name,
                      :email,
                      :special_value1,
-                     :special_value2
+                     :special_value2,
+                     :special_value3,
+                     :special_value4,
+                     :special_value5,
+                     :special_value6
                     ) do
+      attr_accessor :has_permission
+
       def name
         "#{first_name} #{last_name}"
       end
@@ -31,6 +43,10 @@ describe Mappable::Mapping do
                :unused,
                :special_value1,
                :special_value2,
+               :special_value3,
+               :special_value4,
+               :special_value5,
+               :special_value6
               ) do
       attr_accessor :persisted
     end
@@ -41,8 +57,13 @@ describe Mappable::Mapping do
   let(:email) { 'email-' + SecureRandom.hex(8) + '@example.com' }
   let(:special_value1) { 'so special ' + SecureRandom.hex(8) }
   let(:special_value2) { 'even more special ' + SecureRandom.hex(8) }
-  let(:src_model) { src_class.new(first_name, last_name, email, special_value1, special_value2) }
+  let(:special_value3) { 'super special ' + SecureRandom.hex(8) }
+  let(:special_value4) { 'spectacular ' + SecureRandom.hex(8) }
+  let(:special_value5) { 'super special 5 ' + SecureRandom.hex(8) }
+  let(:special_value6) { 'spectacular 6 ' + SecureRandom.hex(8) }
+  let(:src_model) { src_class.new(first_name, last_name, email, special_value1, special_value2, special_value3, special_value4, special_value5, special_value6) }
   let(:dest_model) { dest_class.new }
+  let(:mapping) { mapping_class.new }
 
   context '.mappings' do
     subject { mapping_class.mappings }
@@ -71,7 +92,7 @@ describe Mappable::Mapping do
     end
 
     it 'knows mapped fields' do
-      expect(subject.keys).to eq([:name, :email, :special_value1, :special_value2])
+      expect(subject.keys).to eq([:name, :email, :special_value1, :special_value2, :special_value3, :special_value4, :special_value5, :special_value6])
     end
 
     it 'mapped field options' do
@@ -81,7 +102,7 @@ describe Mappable::Mapping do
   end
 
   context '#map' do
-    subject { mapping_class.new.map(src_model, dest_model) }
+    subject { mapping.map(src_model, dest_model) }
 
     it 'maps data to the dest_model' do
       expect(subject.name).to eq("#{first_name} #{last_name}")
@@ -93,12 +114,22 @@ describe Mappable::Mapping do
       it 'maps valid conditions' do
         expect(subject.special_value1).to eq(nil)
         expect(subject.special_value2).to eq(special_value2)
+        expect(subject.special_value3).to eq(nil)
+        expect(subject.special_value4).to eq(special_value4)
+        expect(subject.special_value5).to eq(nil)
+        expect(subject.special_value6).to eq(special_value6)
       end
 
       it 'maps valid conditions' do
         dest_model.persisted = true
+        src_model.has_permission = true
+        mapping.has_role = true
         expect(subject.special_value1).to eq(special_value1)
         expect(subject.special_value2).to eq(nil)
+        expect(subject.special_value3).to eq(special_value3)
+        expect(subject.special_value4).to eq(nil)
+        expect(subject.special_value5).to eq(special_value5)
+        expect(subject.special_value6).to eq(nil)
       end
     end
   end

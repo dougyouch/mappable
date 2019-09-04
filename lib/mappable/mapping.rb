@@ -34,7 +34,7 @@ module Mappable
         dest ||= src
 
         options = ::Mappable::Mapping.default_mapping_options(src, dest)
-                                    .merge(options)
+                                     .merge(options)
 
         add_value_to_class_method(:mappings, src.to_sym => options)
       end
@@ -50,8 +50,12 @@ module Mappable
     end
 
     def skip?(src_model, dest_model, options)
-      return true if options[:if] && !call_method(dest_model, options[:if])
-      return true if options[:unless] && call_method(dest_model, options[:unless])
+      return true if options[:if] && !call_method(self, options[:if])
+      return true if options[:unless] && call_method(self, options[:unless])
+      return true if options[:if_dest] && !call_method(dest_model, options[:if_dest])
+      return true if options[:unless_dest] && call_method(dest_model, options[:unless_dest])
+      return true if options[:if_src] && !call_method(src_model, options[:if_src])
+      return true if options[:unless_src] && call_method(src_model, options[:unless_src])
 
       false
     end
