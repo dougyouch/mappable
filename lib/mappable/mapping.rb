@@ -11,11 +11,17 @@ module Mappable
     def self.default_mapping_options(src, dest)
       {
         src: src.to_sym,
-        src_getter: src.to_s.freeze,
-        src_setter: "#{src}=",
+        getter: src.to_s.freeze,
         dest: dest.to_sym,
-        dest_getter: dest.to_s.freeze,
-        dest_setter: "#{dest}="
+        setter: "#{dest}="
+      }
+    end
+
+    def self.default_custom_mapping_options(dest, custom_method)
+      {
+        map_method: custom_method,
+        dest: dest.to_sym,
+        setter: "#{dest}="
       }
     end
 
@@ -36,17 +42,39 @@ module Mappable
         options = ::Mappable::Mapping.default_mapping_options(src, dest)
                                      .merge(options)
 
-        add_value_to_class_method(:mappings, src.to_sym => options)
+        add_value_to_class_method(:mappings, dest.to_sym => options)
+      end
+
+      def custom_map(dest, custom_method = nil, options = {})
+        if custom_method.is_a?(Hash)
+          options = custom_method
+          custom_method = nil
+        end
+
+        custom_method ||= dest
+
+        options = ::Mappable::Mapping.default_custom_mapping_options(dest, custom_method)
+                                     .merge(options)
+
+        add_value_to_class_method(:mappings, dest.to_sym => options)
       end
     end
 
     def map(src_model, dest_model)
+      map_data(src_model, dest_model, self.class.mappings)
+    end
+
+    def map_data(src_model, dest_model, mappings)
       self.class.mappings.each do |_, options|
         next if skip?(src_model, dest_model, options)
 
-        dest_model.public_send(options[:dest_setter], src_model.public_send(options[:src_getter]))
+        dest_model.public_send(options[:setter], get_value(src_model, options))
       end
       dest_model
+    end
+
+    # TODO: fix me
+    def map_back(src_model, dest_model)
     end
 
     def skip?(src_model, dest_model, options)
@@ -68,6 +96,25 @@ module Mappable
         model.instance_eval(&method)
       else
         raise("wrong type, failed to call method #{method}")
+      end
+    end
+
+    def call_map_method(model, method)
+      case method
+      when Symbol
+        public_send(method, model)
+      when Proc
+        instance_eval(&method)
+      else
+        raise("wrong type, failed to call method #{method}")
+      end
+    end
+
+    def get_value(model, options)
+      if options[:map_method]
+        call_map_method(model, options[:map_method])
+      else
+        model.public_send(options[:getter])
       end
     end
 

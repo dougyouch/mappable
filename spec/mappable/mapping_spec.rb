@@ -6,7 +6,7 @@ describe Mappable::Mapping do
     Mappable::Mapping.create(Object, 'test_' + SecureRandom.hex(10)) do
       attr_accessor :has_role
 
-      map :name, description: 'combination of first and last name'
+      custom_map :name, description: 'combination of first and last name'
       map :email, :email_address
       map :special_value1, if_dest: :persisted
       map :special_value2, unless_dest: lambda { |_| persisted }
@@ -14,6 +14,10 @@ describe Mappable::Mapping do
       map :special_value4, unless_src: lambda { |_| has_permission }
       map :special_value5, if: :has_role
       map :special_value6, unless: lambda { |_| has_role }
+
+      def name(model)
+        "#{model.first_name} #{model.last_name}"
+      end
     end
   end
 
@@ -29,10 +33,6 @@ describe Mappable::Mapping do
                      :special_value6
                     ) do
       attr_accessor :has_permission
-
-      def name
-        "#{first_name} #{last_name}"
-      end
     end
     kls
   end
@@ -70,12 +70,9 @@ describe Mappable::Mapping do
 
     let(:expected_name_options) do
       {
-        src: :name,
-        src_getter: 'name',
-        src_setter: 'name=',
+        map_method: :name,
         dest: :name,
-        dest_getter: 'name',
-        dest_setter: 'name=',
+        setter: 'name=',
         description: 'combination of first and last name'
       }
     end
@@ -83,21 +80,19 @@ describe Mappable::Mapping do
     let(:expected_email_options) do
       {
         src: :email,
-        src_getter: 'email',
-        src_setter: 'email=',
+        getter: 'email',
         dest: :email_address,
-        dest_getter: 'email_address',
-        dest_setter: 'email_address='
+        setter: 'email_address='
       }
     end
 
     it 'knows mapped fields' do
-      expect(subject.keys).to eq([:name, :email, :special_value1, :special_value2, :special_value3, :special_value4, :special_value5, :special_value6])
+      expect(subject.keys).to eq([:name, :email_address, :special_value1, :special_value2, :special_value3, :special_value4, :special_value5, :special_value6])
     end
 
     it 'mapped field options' do
       expect(subject[:name]).to eq(expected_name_options)
-      expect(subject[:email]).to eq(expected_email_options)
+      expect(subject[:email_address]).to eq(expected_email_options)
     end
   end
 
@@ -131,6 +126,24 @@ describe Mappable::Mapping do
         expect(subject.special_value5).to eq(special_value5)
         expect(subject.special_value6).to eq(nil)
       end
+    end
+  end
+
+  context '#map_back' do
+    let(:src_model) { src_class.new }
+    let(:dest_model) { dest_class.new("#{first_name} #{last_name}", email, SecureRandom.hex(8), special_value1, special_value2, special_value3, special_value4, special_value5, special_value6) }
+    subject { mapping_class.new.map_back(src_model, dest_model) }
+
+    xit 'maps the data back to the src' do
+      expect(subject.first_name).to eq(first_name)
+      expect(subject.last_name).to eq(last_name)
+      expect(subject.email_address).to eq(email)
+      expect(subject.special_value1).to eq(nil)
+      expect(subject.special_value2).to eq(special_value2)
+      expect(subject.special_value3).to eq(nil)
+      expect(subject.special_value4).to eq(special_value4)
+      expect(subject.special_value5).to eq(nil)
+      expect(subject.special_value6).to eq(special_value6)
     end
   end
 end
