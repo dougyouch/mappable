@@ -15,7 +15,7 @@ describe Mappable::Mapping do
       map :special_value5, if: :has_role
       map :special_value6, unless: lambda { |_| has_role }
 
-      custom_map_back(:first_name) { |m| m.name.split(' ', 2).first }
+      custom_map_back(:first_name, description: 'first name of user') { |m| m.name.split(' ', 2).first }
       custom_map_back(:last_name) { |m| m.name.split(' ', 2).last }
 
       def name(model)
