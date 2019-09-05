@@ -15,6 +15,9 @@ describe Mappable::Mapping do
       map :special_value5, if: :has_role
       map :special_value6, unless: lambda { |_| has_role }
 
+      custom_map_back(:first_name) { |m| m.name.split(' ', 2).first }
+      custom_map_back(:last_name) { |m| m.name.split(' ', 2).last }
+
       def name(model)
         "#{model.first_name} #{model.last_name}"
       end
@@ -132,12 +135,12 @@ describe Mappable::Mapping do
   context '#map_back' do
     let(:src_model) { src_class.new }
     let(:dest_model) { dest_class.new("#{first_name} #{last_name}", email, SecureRandom.hex(8), special_value1, special_value2, special_value3, special_value4, special_value5, special_value6) }
-    subject { mapping_class.new.map_back(src_model, dest_model) }
+    subject { mapping_class.new.map_back(dest_model, src_model) }
 
-    xit 'maps the data back to the src' do
+    it 'maps the data back to the src' do
       expect(subject.first_name).to eq(first_name)
       expect(subject.last_name).to eq(last_name)
-      expect(subject.email_address).to eq(email)
+      expect(subject.email).to eq(email)
       expect(subject.special_value1).to eq(nil)
       expect(subject.special_value2).to eq(special_value2)
       expect(subject.special_value3).to eq(nil)
