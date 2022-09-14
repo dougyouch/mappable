@@ -3,10 +3,6 @@ env:
     - CC_TEST_REPORTER_ID=f54f3242f54a3040953c9127294fef862cb1851d12333d004619a8b7b7842054
 rvm:
   - 3.1.2
-  - 2.6.3
-  - 2.1.9
-  - 1.9.3
-gemfile: gemfiles/travis.gemfile
 language: ruby
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
