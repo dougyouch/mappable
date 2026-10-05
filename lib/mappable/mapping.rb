@@ -159,10 +159,9 @@ module Mappable
     end
 
     def self.create(base_module, name, options = {}, &block)
-      options[:class_name] ||= ::Mappable::Utils.classify_name(name.to_s) + 'Mapping'
-      kls = Class.new(options[:base_class] || Object)
-      kls = base_module.const_set(options[:class_name], kls)
-      kls.send(:include, ::Mappable::Mapping)
+      class_name = options[:class_name] || "#{::Mappable::Utils.classify_name(name)}Mapping"
+      kls = base_module.const_set(class_name, Class.new(options[:base_class] || Object))
+      kls.include(::Mappable::Mapping)
       kls.class_eval(&block) if block
       kls
     end
