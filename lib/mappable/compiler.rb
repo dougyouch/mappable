@@ -2,7 +2,7 @@
 
 module Mappable
   # Turns mapping options into the source of a Ruby method, so running a mapping is a
-  # series of plain method calls instead of hash lookups and +public_send+.
+  # series of plain method calls instead of hash lookups and `public_send`.
   #
   # @example
   #   # map :email, :email_address, if_dest: :persisted?
@@ -17,7 +17,7 @@ module Mappable
   #
   # Procs can't be written into source, so they are collected in {#procs} and the
   # generated code reads them from the {PROCS_CONSTANT} constant on the mapping class.
-  # Names that can't be called with dot syntax are called with +public_send+.
+  # Names that can't be called with dot syntax are called with `public_send`.
   #
   # @api private
   class Compiler

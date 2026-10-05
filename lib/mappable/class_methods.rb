@@ -10,8 +10,8 @@ module Mappable
 
     # Creates a mapping class, a constant of this class, and two instance methods that use it:
     #
-    # - +map_to_<name>(dest)+ copies this object's fields to +dest+ and returns +dest+
-    # - +map_from_<name>(src)+ copies the fields of +src+ back to this object and returns +self+
+    # - `map_to_<name>(dest)` copies this object's fields to `dest` and returns `dest`
+    # - `map_from_<name>(src)` copies the fields of `src` back to this object and returns `self`
     #
     # @example
     #   class User
@@ -25,7 +25,7 @@ module Mappable
     #   user.map_to_contact(Contact.new) # => the contact, with email_address set
     #   User.new.map_from_contact(contact) # => the user, with email set
     #
-    # @param name [Symbol, String] names the methods and the mapping class (+:contact+ creates +ContactMapping+)
+    # @param name [Symbol, String] names the methods and the mapping class (`:contact` creates `ContactMapping`)
     # @param options [Hash] see {Mapping.create}
     # @yield evaluated in the mapping class, to declare its mappings (see {Mapping::ClassMethods})
     # @return [Class] the mapping class

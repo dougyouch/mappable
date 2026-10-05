@@ -4,18 +4,18 @@ module Mappable
   module Mapping
     # The mapping DSL, added to classes that include {Mapping}.
     #
-    # == Conditions
+    # ## Conditions
     #
     # {#map}, {#custom_map} and {#custom_map_back} take conditions that skip the field
     # when they don't hold:
     #
-    # - +:if+ / +:unless+ - checked on the mapping instance
-    # - +:if_src+ / +:unless_src+ - checked on the object being read from
-    # - +:if_dest+ / +:unless_dest+ - checked on the object being written to
+    # - `:if` / `:unless` - checked on the mapping instance
+    # - `:if_src` / `:unless_src` - checked on the object being read from
+    # - `:if_dest` / `:unless_dest` - checked on the object being written to
     #
     # A condition is a method name, called on that object, or a proc, run with the
-    # object as +self+ and passed as its argument (a lambda may take no arguments).
-    # For {#map}, the reverse mapping swaps the +_src+ and +_dest+ conditions so they
+    # object as `self` and passed as its argument (a lambda may take no arguments).
+    # For {#map}, the reverse mapping swaps the `_src` and `_dest` conditions so they
     # still check the same object.
     module ClassMethods
       # @return [Hash{Symbol => Hash}] options for each field {Mapping#map} sets, by field name
@@ -28,7 +28,7 @@ module Mappable
         {}.freeze
       end
 
-      # Copies the +src+ field to the +dest+ field, and +dest+ back to +src+ in {Mapping#map_back}.
+      # Copies the `src` field to the `dest` field, and `dest` back to `src` in {Mapping#map_back}.
       #
       # @example
       #   map :email                  # email -> email
@@ -36,7 +36,7 @@ module Mappable
       #   map :active, if_dest: :new_record?
       #
       # @param src [Symbol, String] field read from the source
-      # @param dest [Symbol, String] field written on the destination, defaults to +src+
+      # @param dest [Symbol, String] field written on the destination, defaults to `src`
       # @param options [Hash] conditions (see {ClassMethods}); other keys are kept in {#mappings}
       # @return [void]
       def map(src, dest = nil, options = {})
@@ -53,7 +53,7 @@ module Mappable
         compile_mappings
       end
 
-      # Sets the +dest+ field from a method of the mapping, or a block, given the source.
+      # Sets the `dest` field from a method of the mapping, or a block, given the source.
       # Only applies to {Mapping#map}; use {#custom_map_back} for the reverse.
       #
       # @example
@@ -62,21 +62,21 @@ module Mappable
       #   custom_map(:name) { |src| "#{src.first_name} #{src.last_name}" }
       #
       # @param dest [Symbol, String] field written on the destination
-      # @param custom_method [Symbol, String, Proc] defaults to the block, then to +dest+
+      # @param custom_method [Symbol, String, Proc] defaults to the block, then to `dest`
       # @param options [Hash] conditions (see {ClassMethods}); other keys are kept in {#mappings}
       # @return [void]
       def custom_map(dest, custom_method = nil, options = {}, &)
         add_custom_mapping(:mappings, dest, custom_method, options, &)
       end
 
-      # Sets the +dest+ field on the source object from a method of the mapping, or a block,
+      # Sets the `dest` field on the source object from a method of the mapping, or a block,
       # given the destination object. Used by {Mapping#map_back}.
       #
       # @example
       #   custom_map_back(:first_name) { |contact| contact.name.split(' ', 2).first }
       #
       # @param dest [Symbol, String] field written on the source object
-      # @param custom_method [Symbol, String, Proc] defaults to the block, then to +dest+
+      # @param custom_method [Symbol, String, Proc] defaults to the block, then to `dest`
       # @param options [Hash] conditions (see {ClassMethods}); other keys are kept in {#map_back_mappings}
       # @return [void]
       def custom_map_back(dest, custom_method = nil, options = {}, &)

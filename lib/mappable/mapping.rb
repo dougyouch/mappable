@@ -29,7 +29,7 @@ module Mappable
       base.extend ClassMethods
     end
 
-    # Options for copying the +src+ field into the +dest+ field
+    # Options for copying the `src` field into the `dest` field
     # @api private
     def self.default_mapping_options(src, dest)
       {
@@ -40,7 +40,7 @@ module Mappable
       }
     end
 
-    # Options for setting the +dest+ field from a custom method or proc
+    # Options for setting the `dest` field from a custom method or proc
     # @api private
     def self.default_custom_mapping_options(dest, custom_method)
       {
@@ -73,12 +73,12 @@ module Mappable
       new_options
     end
 
-    # Creates a mapping class and sets it as a constant of +base_module+.
+    # Creates a mapping class and sets it as a constant of `base_module`.
     #
     # @param base_module [Module] where the class's constant is set
-    # @param name [String, Symbol] the class is named after it: +:contact+ becomes +ContactMapping+
+    # @param name [String, Symbol] the class is named after it: `:contact` becomes `ContactMapping`
     # @param options [Hash]
-    # @option options [String] :class_name the class's name instead of one built from +name+
+    # @option options [String] :class_name the class's name instead of one built from `name`
     # @option options [Class] :base_class superclass, so a mapping can extend another one
     # @yield evaluated in the class, to declare its mappings
     # @return [Class]
@@ -90,20 +90,20 @@ module Mappable
       kls
     end
 
-    # Copies the mapped fields from +src_model+ to +dest_model+. Replaced by a generated
+    # Copies the mapped fields from `src_model` to `dest_model`. Replaced by a generated
     # method once the class declares a mapping.
     #
-    # @param src_model [Object]
+    # @param _src_model [Object] not read: there is nothing to copy
     # @param dest_model [Object]
     # @return [Object] dest_model
     def map(_src_model, dest_model)
       dest_model
     end
 
-    # Copies the fields of +dest_model+ back to +src_model+, reversing {#map}. Replaced by a
+    # Copies the fields of `dest_model` back to `src_model`, reversing {#map}. Replaced by a
     # generated method once the class declares a mapping.
     #
-    # @param dest_model [Object] the object to read from
+    # @param _dest_model [Object] the object to read from, not read: there is nothing to copy
     # @param src_model [Object] the object to write to
     # @return [Object] src_model
     def map_back(_dest_model, src_model)
