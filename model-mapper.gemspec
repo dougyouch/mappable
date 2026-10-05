@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.files       = Dir['lib/**/*.rb', 'README.md', 'LICENSE', 'CHANGELOG.md']
   s.required_ruby_version = '>= 3.3'
 
-  s.add_dependency 'inheritance-helper', '~> 0.2'
+  s.add_dependency 'inheritance-helper', '>= 0.2', '< 2'
   s.metadata['rubygems_mfa_required'] = 'true'
   s.metadata['source_code_uri'] = 'https://github.com/dougyouch/mappable'
   s.metadata['changelog_uri'] = 'https://github.com/dougyouch/mappable/blob/master/CHANGELOG.md'
