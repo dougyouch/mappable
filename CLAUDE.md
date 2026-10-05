@@ -48,7 +48,7 @@ See ARCHITECTURE.md for details.
 
 ## CI
 
-`.github/workflows/ci.yml` runs RuboCop, a YARD check (100% documented, no warnings), and the specs on Ruby 3.2 (the gemspec minimum; gems resolved without `Gemfile.lock`, `COVERAGE=false`) and on the `.ruby-version` Ruby (with `Gemfile.lock` and the 100% line/branch coverage gate). On pushes to `master`, it publishes `coverage.svg` (line) and `branches.svg` (branch) from `script/coverage_badge.rb` to the orphan `badges` branch for the README badges.
+`.github/workflows/ci.yml` runs RuboCop, a YARD check (100% documented, no warnings), and the specs with `Gemfile.lock` and the 100% line/branch coverage gate on Ruby 3.3 (the gemspec minimum) and on the `.ruby-version` Ruby. On pushes to `master`, it publishes `coverage.svg` (line) and `branches.svg` (branch) from `script/coverage_badge.rb` to the orphan `badges` branch for the README badges.
 
 ## Releases
 
