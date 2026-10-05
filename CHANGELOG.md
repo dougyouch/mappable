@@ -9,6 +9,7 @@
 
 ### Build System
 
+* **deps:** allow inheritance-helper 1.x and lock 1.0.0 ([69fdaf0](https://github.com/dougyouch/mappable/commit/69fdaf00519a7d9addbca706ebd440fe6f2a4561))
 * **gem:** require ruby 3.3 ([f9d239f](https://github.com/dougyouch/mappable/commit/f9d239f782c0929e6f3d75471a928776f9d50b6d))
 
 ## [0.2.0](https://github.com/dougyouch/mappable/compare/v0.1.0...v0.2.0) (2026-10-05)
