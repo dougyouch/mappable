@@ -1,13 +1,36 @@
 # frozen_string_literal: true
 
 module Mappable
-  # Defines what fields to map
+  # Declares which fields are copied from one object to another, and back.
+  #
+  # Mapping classes are usually created by {Mappable::ClassMethods#map_to}, but any
+  # class can include this module and declare mappings with {ClassMethods#map},
+  # {ClassMethods#custom_map} and {ClassMethods#custom_map_back}. Each declaration
+  # regenerates the class's {#map} and {#map_back} methods (see {Compiler}).
+  #
+  # @example
+  #   class ContactMapping
+  #     include Mappable::Mapping
+  #
+  #     map :email, :email_address
+  #     custom_map(:name) { |user| "#{user.first_name} #{user.last_name}" }
+  #     custom_map_back(:first_name) { |contact| contact.name.split(' ', 2).first }
+  #     custom_map_back(:last_name) { |contact| contact.name.split(' ', 2).last }
+  #   end
+  #
+  #   ContactMapping.new.map(user, Contact.new)      # => the contact
+  #   ContactMapping.new.map_back(contact, User.new) # => the user
   module Mapping
+    autoload :ClassMethods, 'mappable/mapping/class_methods'
+
+    # @api private
     def self.included(base)
       base.extend InheritanceHelper::Methods
       base.extend ClassMethods
     end
 
+    # Options for copying the +src+ field into the +dest+ field
+    # @api private
     def self.default_mapping_options(src, dest)
       {
         src: src.to_sym,
@@ -17,6 +40,8 @@ module Mappable
       }
     end
 
+    # Options for setting the +dest+ field from a custom method or proc
+    # @api private
     def self.default_custom_mapping_options(dest, custom_method)
       {
         map_method: custom_method,
@@ -25,145 +50,64 @@ module Mappable
       }
     end
 
+    # Each condition of a {ClassMethods#map} call and the condition it becomes in the
+    # reverse mapping. The source and destination swap places, so _src and _dest
+    # conditions swap too and still check the same object.
+    # @api private
+    MAP_BACK_CONDITIONS = {
+      if: :if,
+      unless: :unless,
+      if_src: :if_dest,
+      unless_src: :unless_dest,
+      if_dest: :if_src,
+      unless_dest: :unless_src
+    }.freeze
+
+    # Reverses the options of a {ClassMethods#map} call (see {MAP_BACK_CONDITIONS})
+    # @api private
     def self.map_back_options(options)
       new_options = default_mapping_options(options[:dest], options[:src])
-      [:if, :unless].each do |cond|
-        next unless options[cond]
-
-        new_options[cond] = options[cond]
+      MAP_BACK_CONDITIONS.each do |cond, map_back_cond|
+        new_options[map_back_cond] = options[cond] if options[cond]
       end
-
-      [
-        [:if_src, :if_dest],
-        [:unless_src, :unless_dest]
-      ].each do |src_cond, dest_cond|
-        new_options[dest_cond] = options[src_cond] if options[src_cond]
-        new_options[src_cond] = options[dest_cond] if options[dest_cond]
-      end
-
       new_options
     end
 
-    # no-doc
-    module ClassMethods
-      def mappings
-        {}.freeze
-      end
-
-      def map_back_mappings
-        {}.freeze
-      end
-
-      def map(src, dest = nil, options = {})
-        if dest.is_a?(Hash)
-          options = dest
-          dest = nil
-        end
-
-        dest ||= src
-
-        options = ::Mappable::Mapping.default_mapping_options(src, dest)
-                                     .merge(options)
-        add_value_to_class_method(:mappings, dest.to_sym => options)
-
-        add_value_to_class_method(:map_back_mappings, src.to_sym => ::Mappable::Mapping.map_back_options(options))
-      end
-
-      def custom_map(dest, custom_method = nil, options = {}, &block)
-        if custom_method.is_a?(Hash)
-          options = custom_method
-          custom_method = nil
-        end
-
-        custom_method ||= block
-        custom_method ||= dest
-
-        options = ::Mappable::Mapping.default_custom_mapping_options(dest, custom_method)
-                                     .merge(options)
-
-        add_value_to_class_method(:mappings, dest.to_sym => options)
-      end
-
-      def custom_map_back(dest, custom_method = nil, options = {}, &block)
-        if custom_method.is_a?(Hash)
-          options = custom_method
-          custom_method = nil
-        end
-
-        custom_method ||= block
-        custom_method ||= dest
-
-        options = ::Mappable::Mapping.default_custom_mapping_options(dest, custom_method)
-                                     .merge(options)
-
-        add_value_to_class_method(:map_back_mappings, dest.to_sym => options)
-      end
-    end
-
-    def map(src_model, dest_model)
-      map_data(src_model, dest_model, self.class.mappings)
-    end
-
-    def map_data(src_model, dest_model, mappings)
-      mappings.each do |_, options|
-        next if skip?(src_model, dest_model, options)
-
-        dest_model.public_send(options[:setter], get_value(src_model, options))
-      end
-      dest_model
-    end
-
-    def map_back(dest_model, src_model)
-      map_data(dest_model, src_model, self.class.map_back_mappings)
-    end
-
-    def skip?(src_model, dest_model, options)
-      return true if options[:if] && !call_method(self, options[:if])
-      return true if options[:unless] && call_method(self, options[:unless])
-      return true if options[:if_dest] && !call_method(dest_model, options[:if_dest])
-      return true if options[:unless_dest] && call_method(dest_model, options[:unless_dest])
-      return true if options[:if_src] && !call_method(src_model, options[:if_src])
-      return true if options[:unless_src] && call_method(src_model, options[:unless_src])
-
-      false
-    end
-
-    def call_method(model, method)
-      case method
-      when Symbol
-        model.public_send(method)
-      when Proc
-        model.instance_eval(&method)
-      else
-        raise("wrong type, failed to call method #{method}")
-      end
-    end
-
-    def call_map_method(model, method)
-      case method
-      when Symbol
-        public_send(method, model)
-      when Proc
-        method.call(model)
-      else
-        raise("wrong type, failed to call method #{method}")
-      end
-    end
-
-    def get_value(model, options)
-      if options[:map_method]
-        call_map_method(model, options[:map_method])
-      else
-        model.public_send(options[:getter])
-      end
-    end
-
+    # Creates a mapping class and sets it as a constant of +base_module+.
+    #
+    # @param base_module [Module] where the class's constant is set
+    # @param name [String, Symbol] the class is named after it: +:contact+ becomes +ContactMapping+
+    # @param options [Hash]
+    # @option options [String] :class_name the class's name instead of one built from +name+
+    # @option options [Class] :base_class superclass, so a mapping can extend another one
+    # @yield evaluated in the class, to declare its mappings
+    # @return [Class]
     def self.create(base_module, name, options = {}, &block)
       class_name = options[:class_name] || "#{::Mappable::Utils.classify_name(name)}Mapping"
       kls = base_module.const_set(class_name, Class.new(options[:base_class] || Object))
       kls.include(::Mappable::Mapping)
       kls.class_eval(&block) if block
       kls
+    end
+
+    # Copies the mapped fields from +src_model+ to +dest_model+. Replaced by a generated
+    # method once the class declares a mapping.
+    #
+    # @param src_model [Object]
+    # @param dest_model [Object]
+    # @return [Object] dest_model
+    def map(_src_model, dest_model)
+      dest_model
+    end
+
+    # Copies the fields of +dest_model+ back to +src_model+, reversing {#map}. Replaced by a
+    # generated method once the class declares a mapping.
+    #
+    # @param dest_model [Object] the object to read from
+    # @param src_model [Object] the object to write to
+    # @return [Object] src_model
+    def map_back(_dest_model, src_model)
+      src_model
     end
   end
 end

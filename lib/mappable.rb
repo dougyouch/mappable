@@ -7,6 +7,7 @@ require 'inheritance-helper'
 # Include it in a class and declare mappings with {ClassMethods#map_to}.
 module Mappable
   autoload :ClassMethods, 'mappable/class_methods'
+  autoload :Compiler, 'mappable/compiler'
   autoload :Mapping, 'mappable/mapping'
   autoload :Utils, 'mappable/utils'
   autoload :VERSION, 'mappable/version'

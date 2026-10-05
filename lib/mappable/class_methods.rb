@@ -8,8 +8,8 @@ module Mappable
       {}.freeze
     end
 
-    def map_to(name, options = {}, &block)
-      mapping = Mapping.create(self, name, options, &block)
+    def map_to(name, options = {}, &)
+      mapping = Mapping.create(self, name, options, &)
       add_value_to_class_method(:maps, name.to_sym => mapping)
       # referenced by its constant name, resolved from this class, so anonymous classes work too
       mapping_const = mapping.name.split('::').last
