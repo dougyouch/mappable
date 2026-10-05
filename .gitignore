@@ -49,3 +49,6 @@ pkg
 #*.rbc
 
 *.gem
+
+# rvm
+.ruby-gemset

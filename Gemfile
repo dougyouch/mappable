@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gem 'inheritance-helper'
 
 group :development do
-  gem 'rake'
   gem 'rubocop'
+  gem 'yard'
 end
 
 group :spec do
