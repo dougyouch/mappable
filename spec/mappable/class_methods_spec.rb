@@ -21,6 +21,11 @@ describe Mappable::ClassMethods do
       dest = src_class.new('Ada', 'ada@example.com').map_to_contact(dest_class.new)
       expect(dest.to_a).to eq(['Ada', 'ada@example.com'])
     end
+
+    it 'maps data back from the destination' do
+      src = src_class.new.map_from_contact(dest_class.new('Ada', 'ada@example.com'))
+      expect(src.to_a).to eq(['Ada', 'ada@example.com'])
+    end
   end
 
   describe '.map_to' do
