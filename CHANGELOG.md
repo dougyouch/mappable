@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.0](https://github.com/dougyouch/mappable/compare/v0.2.0...v0.3.0) (2026-10-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **gem:** Ruby 3.2 reached end of life in March 2026 and is no longer supported. CI now tests Ruby 3.3 and the .ruby-version Ruby, both with Gemfile.lock and the coverage gate.
+
+### Build System
+
+* **gem:** require ruby 3.3 ([f9d239f](https://github.com/dougyouch/mappable/commit/f9d239f782c0929e6f3d75471a928776f9d50b6d))
+
 ## [0.2.0](https://github.com/dougyouch/mappable/compare/v0.1.0...v0.2.0) (2026-10-05)
 
 
