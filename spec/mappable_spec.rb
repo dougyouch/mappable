@@ -1,12 +1,13 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Mappable do
-  let(:src_class_name) { 'Src' + SecureRandom.hex(10) }
+  let(:src_class_name) { "Src#{SecureRandom.hex(10)}" }
   let(:src_class) do
     kls = Struct.new(:first_name,
                      :last_name,
-                     :email
-                    ) do
+                     :email) do
       include Mappable
 
       def name
@@ -15,20 +16,19 @@ describe Mappable do
     end
     kls = Object.const_set(src_class_name, kls)
     kls.map_to(:test) do
-        map :name, description: 'combination of first and last name'
-        map :email, :email_address
+      map :name, description: 'combination of first and last name'
+      map :email, :email_address
     end
     kls
   end
   let(:dest_class) do
     Struct.new(:name,
                :email_address,
-               :unused
-              )
+               :unused)
   end
-  let(:first_name) { 'first_' + SecureRandom.hex(8) }
-  let(:last_name) { 'last_' + SecureRandom.hex(8) }
-  let(:email) { 'email-' + SecureRandom.hex(8) + '@example.com' }
+  let(:first_name) { "first_#{SecureRandom.hex(8)}" }
+  let(:last_name) { "last_#{SecureRandom.hex(8)}" }
+  let(:email) { "email-#{SecureRandom.hex(8)}@example.com" }
   let(:src_model) { src_class.new(first_name, last_name, email) }
   let(:dest_model) { dest_class.new }
 
@@ -42,7 +42,7 @@ describe Mappable do
     subject { src_class.maps }
 
     it 'adds the mapping to the maps' do
-      expect(subject.has_key?(:test)).to eq(true)
+      expect(subject.key?(:test)).to eq(true)
     end
   end
 

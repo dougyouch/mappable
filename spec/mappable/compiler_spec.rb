@@ -24,7 +24,7 @@ describe Mappable::Compiler do
     end
 
     context 'with names that are not valid method calls' do
-      before { mapping_class.map :'first-name', :'name?' }
+      before { mapping_class.map :'first-name', :name? }
 
       it 'uses public_send' do
         expect(subject).to include('dest_model.public_send(:"name?=", src_model.public_send(:"first-name"))')
@@ -40,7 +40,7 @@ describe Mappable::Compiler do
     end
 
     context 'with a custom map proc' do
-      let(:block) { proc { |src| src.name } }
+      let(:block) { proc(&:name) }
 
       before { mapping_class.custom_map :name, block }
 
