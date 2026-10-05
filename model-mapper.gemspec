@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.email       = 'dougyouch@gmail.com'
   s.homepage    = 'https://github.com/dougyouch/mappable'
   s.files       = Dir['lib/**/*.rb', 'README.md', 'LICENSE', 'CHANGELOG.md']
-  s.required_ruby_version = '>= 3.2'
+  s.required_ruby_version = '>= 3.3'
 
   s.add_dependency 'inheritance-helper', '~> 0.2'
   s.metadata['rubygems_mfa_required'] = 'true'

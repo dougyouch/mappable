@@ -47,31 +47,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          # the oldest Ruby the gemspec allows. Gemfile.lock pins gems that need a newer Ruby,
-          # so gems are resolved fresh and coverage (simplecov 1.x needs Ruby 3.3+) is skipped
-          - ruby: '3.2'
-            locked: false
-          # "default" is the Ruby in .ruby-version, which Gemfile.lock is resolved against;
-          # this job enforces the coverage gate and feeds the badge
-          - ruby: default
-            locked: true
+        # the oldest Ruby the gemspec allows, and "default" (the Ruby in .ruby-version).
+        # Both use Gemfile.lock and enforce the 100% coverage gate; default feeds the badge.
+        ruby: ['3.3', default]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - if: ${{ !matrix.locked }}
-        run: rm Gemfile.lock
       - uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
       - run: bundle exec rspec
-        env:
-          COVERAGE: ${{ matrix.locked }}
       # feeds the coverage badge
       - name: Upload coverage report
-        if: ${{ matrix.locked }}
+        if: matrix.ruby == 'default'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage

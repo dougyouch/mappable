@@ -11,7 +11,7 @@ Fast, declarative two-way mapping between Ruby objects. Declare once how the fie
 
 ## Installation
 
-Requires Ruby 3.2 or newer. The gem is published as `model-mapper`:
+Requires Ruby 3.3 or newer. The gem is published as `model-mapper`:
 
 ```ruby
 gem 'model-mapper'
@@ -219,7 +219,7 @@ bundle exec rubocop  # lint
 bundle exec yard     # API docs in doc/
 ```
 
-CI runs RuboCop, requires every public API to have YARD docs, and runs the specs on Ruby 3.2 and on the Ruby in `.ruby-version`, where it requires 100% line and branch coverage.
+CI runs RuboCop, requires every public API to have YARD docs, and runs the specs on Ruby 3.3 and on the Ruby in `.ruby-version`, requiring 100% line and branch coverage on both.
 
 Releases are automated with [release-please](https://github.com/googleapis/release-please): [conventional commits](https://www.conventionalcommits.org/) on `master` keep a release PR up to date, and merging it tags the release and publishes the gem to RubyGems.
 
