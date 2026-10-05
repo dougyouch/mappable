@@ -21,5 +21,3 @@
 ### Performance Improvements
 
 * **mapping:** compile mappings into plain ruby methods ([8854abb](https://github.com/dougyouch/mappable/commit/8854abb763f976bbc76a4bd7cc00e9c1dde50908))
-
-## Changelog
