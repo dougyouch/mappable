@@ -1,12 +1,33 @@
-Naming/FileName:
-  Enabled: false
-Metrics/LineLength:
-  Max: 120
-Metrics/ModuleLength:
-  Max: 120
-Metrics/MethodLength:
-  Max: 20
 AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  SuggestExtensions: false
   Exclude:
-    - 'spec/spec_helper.rb'
-    - 'spec/**/*_spec.rb'
+    - 'vendor/**/*'
+    - 'coverage/**/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - '*.gemspec'
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: always
+
+Layout/LineLength:
+  Max: 130
+  Exclude:
+    - 'spec/**/*'
+
+# File naming - allow hyphenated gem name
+Naming/FileName:
+  Exclude:
+    - 'lib/model-mapper.rb'
+
+# Mappings are compiled into methods with class_eval; the generated source is
+# documented by Mappable::Compiler
+Style/DocumentDynamicEvalDefinition:
+  Enabled: false

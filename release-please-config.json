@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "bf0fd8847fee32dc9a231a22dc78dafa2985c468",
+  "bump-minor-pre-major": true,
+  "packages": {
+    ".": {
+      "release-type": "ruby",
+      "package-name": "model-mapper",
+      "version-file": "lib/mappable/version.rb",
+      "include-component-in-tag": false
+    }
+  }
+}
